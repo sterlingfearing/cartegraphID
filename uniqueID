@@ -1,0 +1,41 @@
+// Define abbreviation for Park Code
+var loCode = $feature["LoCode"];
+var parkAbbr = "";
+
+if (loCode == "P151") {
+    parkAbbr = "DvlRNort";
+} else if (loCode == "P119") {
+    parkAbbr = "ERock";
+} else {
+    parkAbbr = Text(Left(loCode, 4));
+}
+
+// Determine Bldg or Struc
+var bldgStruc = $feature["BldgStruc"];
+var secondPart = "";
+
+if (bldgStruc == "Building") {
+    secondPart = "Bldg";
+} else if (bldgStruc == "Structure") {
+    secondPart = "Struc";
+}
+
+// Get third part from Functional Name and remove spaces
+var functionalName = $feature["NameFunction"];
+var thirdPart = "";
+if (!IsEmpty(functionalName)) {
+    thirdPart = Replace(functionalName, " ", "");
+}
+
+// Generate a unique 4 digit value
+var objectID = $feature["OBJECTID"];
+var uniqueValue = "";
+if (!IsEmpty(objectID)) {
+    uniqueValue = Right("0000" + Text(objectID), 4);
+}
+
+// Combine for final ID
+var autoCartID = Concatenate(parkAbbr, "_", secondPart, "_", thirdPart, "_", uniqueValue);
+
+// Return final ID
+return autoCartID;
