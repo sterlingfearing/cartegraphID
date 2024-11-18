@@ -1,0 +1,89 @@
+// Define abbreviation for Park Code
+var loCode = $feature["LoCode"];
+var parkAbbr = "";
+
+if (IsEmpty(loCode)) {
+    return "Error: Park Code is missing";
+}
+
+if (loCode == "P151") {
+    parkAbbr = "DvlRNort";
+} else if (loCode == "P119") {
+    parkAbbr = "ERock";
+} else {
+    parkAbbr = Text(Left(loCode, 4));
+}
+
+// Determine Bldg or Struc
+var bldgStruc = $feature["BldgStruc"];
+var secondPart = "";
+
+if (IsEmpty(bldgStruc)) {
+    return "Error: Building or Structure type is missing";
+}
+
+if (bldgStruc == "Building") {
+    secondPart = "Bldg";
+} else if (bldgStruc == "Structure") {
+    secondPart = "Struc";
+}
+
+// Get third part from Functional Name and remove spaces
+var functionalName = $feature["NameFunction"];
+var thirdPart = "";
+if (!IsEmpty(functionalName)) {
+    thirdPart = Replace(functionalName, " ", "");
+}
+
+// Calculate the centroid of the polygon
+var geometry = Geometry($feature);
+if (IsEmpty(geometry)) {
+    return "Error: Geometry is missing";
+}
+
+var centroid = Centroid(geometry);
+if (IsEmpty(centroid)) {
+    return "Error: Unable to calculate centroid";
+}
+
+// Extract the longitude and latitude of the centroid
+var longitude = Abs(centroid.X); // Ensure positive value
+var latitude = Abs(centroid.Y);  // Ensure positive value
+
+// Ensure the coordinates are valid
+if (IsEmpty(longitude) || IsEmpty(latitude)) {
+    return "Error: Invalid coordinates";
+}
+
+// Format the latitude and longitude to get the first four digits after the decimal place
+var latStr = Text(Floor(latitude * 10000) % 10000, '0000');
+var longStr = Text(Floor(longitude * 10000) % 10000, '0000');
+
+// Combine latitude and longitude parts
+var uniqueValue = Concatenate(latStr, "_", longStr);
+
+// Combine for initial ID
+var autoCartID = Concatenate(parkAbbr, "_", secondPart, "_", thirdPart, "_", uniqueValue);
+
+// Abbreviate functional name if autoCartID exceeds 50 characters
+if (Length(autoCartID) > 50) {
+    if (!IsEmpty(thirdPart)) {
+        var firstFive = Left(thirdPart, 5);
+        var remainder = Right(thirdPart, Length(thirdPart) - 5);
+        var abbreviatedRemainder = Replace(remainder, "a", "");
+        abbreviatedRemainder = Replace(abbreviatedRemainder, "e", "");
+        abbreviatedRemainder = Replace(abbreviatedRemainder, "i", "");
+        abbreviatedRemainder = Replace(abbreviatedRemainder, "o", "");
+        abbreviatedRemainder = Replace(abbreviatedRemainder, "u", "");
+        abbreviatedRemainder = Replace(abbreviatedRemainder, "A", "");
+        abbreviatedRemainder = Replace(abbreviatedRemainder, "E", "");
+        abbreviatedRemainder = Replace(abbreviatedRemainder, "I", "");
+        abbreviatedRemainder = Replace(abbreviatedRemainder, "O", "");
+        abbreviatedRemainder = Replace(abbreviatedRemainder, "U", "");
+        thirdPart = Concatenate(firstFive, abbreviatedRemainder);
+        autoCartID = Concatenate(parkAbbr, "_", secondPart, "_", thirdPart, "_", uniqueValue);
+    }
+}
+
+// Return final ID
+return autoCartID;
