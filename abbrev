@@ -1,4 +1,5 @@
 // Define abbreviation for Park Code
+
 var loCode = $feature["LoCode"];
 var parkAbbr = "";
 
