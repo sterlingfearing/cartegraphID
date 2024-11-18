@@ -1,0 +1,63 @@
+// Define abbreviation for Park Code
+var loCode = $feature["LoCode"];
+var parkAbbr = "";
+
+if (IsEmpty(loCode)) {
+    return "Error: Park Code is missing";
+}
+
+if (loCode == "P151") {
+    parkAbbr = "DvlRNort";
+} else if (loCode == "P119") {
+    parkAbbr = "ERock";
+} else {
+    parkAbbr = Text(Left(loCode, 4));
+}
+
+// Determine Bldg or Struc
+var bldgStruc = $feature["BldgStruc"];
+var secondPart = "";
+
+if (IsEmpty(bldgStruc)) {
+    return "Error: Building or Structure type is missing";
+}
+
+if (bldgStruc == "Building") {
+    secondPart = "Bldg";
+} else if (bldgStruc == "Structure") {
+    secondPart = "Struc";
+}
+
+// Get third part from Functional Name and remove spaces
+var functionalName = $feature["NameFunction"];
+var thirdPart = "";
+if (!IsEmpty(functionalName)) {
+    thirdPart = Replace(functionalName, " ", "");
+}
+
+// Calculate the centroid of the polygon
+var centroid = Centroid($feature);
+
+// Extract the longitude and latitude of the centroid
+var longitude = Abs(centroid.X); // Ensure positive value
+var latitude = Abs(centroid.Y);  // Ensure positive value
+
+// Format the latitude and longitude to get the first four digits after the decimal place
+var latStr = Text(Floor(latitude * 10000) % 10000, '0000');
+var longStr = Text(Floor(longitude * 10000) % 10000, '0000');
+
+// Combine latitude and longitude parts
+var uniqueValue = Concatenate(latStr, "_", longStr);
+
+// Check for SiteNumber
+var siteNumber = $feature["SiteNumber"];
+var sitePart = "";
+if (!IsEmpty(siteNumber)) {
+    sitePart = "_" + siteNumber;
+}
+
+// Combine for final ID
+var autoCartID = Concatenate(parkAbbr, "_", secondPart, "_", thirdPart, sitePart, "_", uniqueValue);
+
+// Return final ID
+return autoCartID;
