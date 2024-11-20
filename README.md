@@ -81,7 +81,9 @@ return CartegraphID;
 ## Create in ArcPro
 Follow the steps below to generate the Cartegraph ID field in ArcPro for buildings and structures 
 1. Add a field called "CartegraphID" to the attribute table
-2. Identify the abbreviated park name from excel file
+   - Data Type = Text
+   - Length = 50 character max
+3. Identify the abbreviated park name from excel file
    Note: Code will need to be edited for park of interest
 4. Import attribute rule:
    - Right click on layer in contents pane
