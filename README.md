@@ -12,7 +12,6 @@ Five components separated by underscores
    Ex. 30.4987243 N 98.8187818 W is written as 4987_8187
 
 ## Arcade Expression
-Also found in repository as campIncluded
 Note: Park abbreviations and LoCodes must be added or updated for given park
 ```// Define abbreviation for Park Code
 var loCode = $feature["LoCode"];
