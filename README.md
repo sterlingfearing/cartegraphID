@@ -11,7 +11,8 @@ Five components separated by underscores
 5. Location ID- based on lat and long of centroid, first four digits following the decimal place of each.
    Ex. 30.4987243 N 98.8187818 W is written as 4987_8187
 
-## Expression
+## Arcade Expression
+Also found in repository as campIncluded
 Note: Park abbreviations and LoCodes must be added or updated for given park
 ```// Define abbreviation for Park Code
 var loCode = $feature["LoCode"];
